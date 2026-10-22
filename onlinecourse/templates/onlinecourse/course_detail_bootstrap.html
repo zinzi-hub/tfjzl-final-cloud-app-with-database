@@ -8,9 +8,7 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <meta charset="UTF-8">
 </head>
-
 <body>
-    <!-- Navigation bar -->
     <nav class="navbar navbar-light bg-light">
         <div class="container-fluid">
             <div class="navbar-header">
@@ -39,7 +37,6 @@
         </div>
     </nav>
 
-    <!-- Page content -->
     <div class="container-fluid">
             <h2>{{ course.name }}</h2>
             <div class="card-columns-vertical">
@@ -52,7 +49,6 @@
                 </div>
             </div>
 
-            <!-- Lessons -->
             <div class="card-columns-vertical">
                 {% for lesson in course.lesson_set.all %}
                     <div class="card mt-1">
@@ -66,4 +62,27 @@
             {% if user.is_authenticated %}
             <br>
             <button class="btn btn-primary btn-block" data-toggle="collapse" data-target="#exam">Start Exam</button>
-            <div id="exam" class="
+            <div id="exam" class="collapse">
+                <form id="questionform" action="{% url 'onlinecourse:submit' course.id %}" method="POST">
+                    {% for question in course.question_set.all %}
+                    <div class="card mt-1">
+                        <div class="card-header"><h5>{{ question.content }}</h5></div>
+                        {% csrf_token %}
+                        <div class="form-group">
+                            {% for choice in question.choice_set.all %}
+                            <div class="form-check">
+                                <label class="form-check-label">
+                                    <input type="checkbox" name="choice_{{choice.id}}" class="form-check" id="{{choice.id}}" value="{{choice.id}}">{{ choice.content }}
+                                </label>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                    <input class="btn btn-success btn-block" type="submit" value="Submit">
+                </form>
+            </div>
+            {% endif %}
+    </div>
+</body>
+</html>
